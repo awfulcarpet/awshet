@@ -49,5 +49,5 @@ func main() {
 	<-stop
 
 	log.Println("Shutting Down")
-	removeCommands(dg)
+	// removeCommands(dg)
 }

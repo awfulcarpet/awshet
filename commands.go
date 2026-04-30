@@ -29,6 +29,8 @@ func registerCommands(dg *discordgo.Session) {
 		}
 		registeredCommands[i] = cmd
 	}
+
+	dg.AddHandler(slashCommandHandler)
 }
 
 func removeCommands(dg *discordgo.Session) {
@@ -39,5 +41,22 @@ func removeCommands(dg *discordgo.Session) {
 		if err != nil {
 			log.Panicf("Cannot delete '%v' command: %v", v.Name, err)
 		}
+	}
+}
+
+func slashCommandHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
+	data := i.ApplicationCommandData()
+	switch data.Name {
+	case "checkin":
+		checkin(s, i)
+	case "checkout":
+		checkin(s, i)
+	}
+}
+
+func checkin(s *discordgo.Session, i *discordgo.InteractionCreate) {
+	options := i.ApplicationCommandData().Options
+	for _, v := range options {
+		log.Println(v)
 	}
 }
