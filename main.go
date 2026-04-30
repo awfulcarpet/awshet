@@ -30,6 +30,9 @@ func main() {
 		fmt.Println("error creating Discord session,", err)
 		return
 	}
+	dg.AddHandler(func(s *discordgo.Session, r *discordgo.Ready) {
+		log.Printf("Logged in as: %v#%v", s.State.User.Username, s.State.User.Discriminator)
+	})
 
 	// Register the messageCreate function as a callback for the MessageCreate event.
 	dg.AddHandler(messageCreate)
@@ -42,7 +45,6 @@ func main() {
 	}
 	defer dg.Close()
 
-	fmt.Println("Bot is now running")
 	select {}
 }
 
