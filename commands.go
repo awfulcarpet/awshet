@@ -22,13 +22,13 @@ var (
 
 func registerCommands(dg *discordgo.Session) {
 	log.Println("Creating all commands")
-	for i, v := range commands {
-		cmd, err := dg.ApplicationCommandCreate(dg.State.User.ID, "", v)
-		if err != nil {
-			log.Panicf("Cannot create '%v' command: %v", v.Name, err)
-		}
-		registeredCommands[i] = cmd
-	}
+	// for i, v := range commands {
+	// 	cmd, err := dg.ApplicationCommandCreate(dg.State.User.ID, "", v)
+	// 	if err != nil {
+	// 		log.Panicf("Cannot create '%v' command: %v", v.Name, err)
+	// 	}
+	// 	registeredCommands[i] = cmd
+	// }
 
 	dg.AddHandler(slashCommandHandler)
 }
