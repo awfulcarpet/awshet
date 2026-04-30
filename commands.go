@@ -17,22 +17,24 @@ var (
 			Description: "Checks students out and logs time and day",
 		},
 	}
+	registeredCommands = make([]*discordgo.ApplicationCommand, len(commands))
 )
 
 func registerCommands(dg *discordgo.Session) {
 	log.Println("Creating all commands")
-	for _, v := range commands {
-		_, err := dg.ApplicationCommandCreate(dg.State.User.ID, "", v)
+	for i, v := range commands {
+		cmd, err := dg.ApplicationCommandCreate(dg.State.User.ID, "", v)
 		if err != nil {
 			log.Panicf("Cannot create '%v' command: %v", v.Name, err)
 		}
+		registeredCommands[i] = cmd
 	}
 }
 
 func removeCommands(dg *discordgo.Session) {
 	log.Println("Removing all Commands")
 
-	for _, v := range commands {
+	for _, v := range registeredCommands {
 		err := dg.ApplicationCommandDelete(dg.State.User.ID, "", v.ID)
 		if err != nil {
 			log.Panicf("Cannot delete '%v' command: %v", v.Name, err)
