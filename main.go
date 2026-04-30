@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"os/signal"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/joho/godotenv"
@@ -31,7 +32,7 @@ func main() {
 		log.Printf("Logged in as: %v#%v", s.State.User.Username, s.State.User.Discriminator)
 	})
 
-	dg.AddHandler(messageCreate)
+	// dg.AddHandler(messageCreate)
 
 	err = dg.Open()
 	if err != nil {
@@ -40,5 +41,13 @@ func main() {
 	}
 	defer dg.Close()
 
-	select {}
+	registerCommands(dg)
+
+	stop := make(chan os.Signal, 1)
+	signal.Notify(stop, os.Interrupt)
+	log.Println("Press Ctrl+C to exit")
+	<-stop
+
+	log.Println("Shutting Down")
+	removeCommands(dg)
 }
