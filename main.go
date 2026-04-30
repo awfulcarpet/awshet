@@ -39,7 +39,7 @@ func main() {
 	}
 	defer dg.Close()
 
-	fmt.Println("Bot is now running. Press CTRL+C to exit.")
+	fmt.Println("Bot is now running")
 	select {}
 }
 
@@ -49,6 +49,9 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if m.Author.ID == s.State.User.ID {
 		return
 	}
+
+	log.Println("message:", m.Message.ID, m.Author.Username, "sent", m.Message.Content)
+	s.MessageReactionAdd(m.ChannelID, m.Message.ID, "✅")
 
 	// Respond to a simple command "!ping"
 	if m.Content == "!ping" {
