@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"regexp"
+	"time"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/joho/godotenv"
@@ -60,7 +61,7 @@ type check struct {
 	name      string
 	discordID string
 	messageID string
-	date      uint64
+	date      time.Time
 	checkType string
 }
 
@@ -80,16 +81,25 @@ func handleCheck(s *discordgo.Session, m *discordgo.MessageCreate) {
 	}
 
 	s.MessageReactionAdd(m.ChannelID, m.Message.ID, "✅")
-	log.Println("checked in", check.name, "in message", check.messageID)
+	log.Println("checked", check.checkType, check.name, "on", check.date.Unix(), "in message", check.messageID)
 }
 
-func parseCheckMessage(message string) (string, uint64, error) {
-	r, _ := regexp.Compile("(in|out)")
+func parseCheckMessage(message string) (string, time.Time, error) {
+	typeRegex := regexp.MustCompile("(in|out)")
+	// TODO: implement date string
+	nowRegex := regexp.MustCompile("now")
 
-	match := r.MatchString(message)
-	if !match {
-		return "", 0, errors.New("invalid command supplied")
+	checkType := typeRegex.FindString(message)
+	if checkType == "" {
+		return checkType, time.Time{}, errors.New("invalid command supplied")
 	}
 
-	return "", 0, nil
+	date := nowRegex.FindString(message)
+	if date == "" {
+		return checkType, time.Time{}, errors.New("invalid time supplied")
+	}
+
+	time := time.Now()
+
+	return checkType, time, nil
 }
