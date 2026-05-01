@@ -11,7 +11,7 @@ var (
 	timeOption = &discordgo.ApplicationCommandOption{
 		Type:        discordgo.ApplicationCommandOptionString,
 		Name:        "time",
-		Description: "a date value in the form mm/dd or now to record time",
+		Description: "a value, either 'now' or in the format 'xx:yy' to log",
 		Required:    true,
 	}
 	commands = []*discordgo.ApplicationCommand{
