@@ -68,7 +68,6 @@ func slashCommandHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
 }
 
 func sendStringResponse(mesg string, s *discordgo.Session, i *discordgo.InteractionCreate) {
-
 	err := s.InteractionRespond(
 		i.Interaction,
 		&discordgo.InteractionResponse{
@@ -90,7 +89,7 @@ func checkin(s *discordgo.Session, i *discordgo.InteractionCreate) {
 
 	checkinTime, err := parseCheckMessage(time)
 	if err != nil {
-		sendStringResponse(checkinTime.Format(":skull:"), s, i)
+		sendStringResponse(err.Error(), s, i)
 		return
 	}
 
