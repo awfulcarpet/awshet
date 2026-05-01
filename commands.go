@@ -96,10 +96,10 @@ func check(checkType checkType, s *discordgo.Session, i *discordgo.InteractionCr
 	}
 
 	msg := checkMessage{
-		username:  i.Member.User.Username,
-		discordID: i.Member.User.ID,
-		time:      checkinTime,
-		checkType: checkType,
+		Username:  i.Member.User.Username,
+		DiscordID: i.Member.User.ID,
+		Timestamp: checkinTime,
+		CheckType: checkType,
 	}
 
 	err = updateDB(msg)

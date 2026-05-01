@@ -12,10 +12,10 @@ import (
 type checkType string
 
 type checkMessage struct {
-	username  string    `csv:"Username"`
-	discordID string    `csv:"Discord ID"`
-	time      time.Time `csv:"Timestamp"`
-	checkType checkType `csv:"Check Type"`
+	Username  string    `csv:"Username"`
+	DiscordID string    `csv:"Discord ID"`
+	Timestamp time.Time `csv:"Timestamp"`
+	CheckType checkType `csv:"Check Type"`
 }
 
 type userLog struct {
@@ -56,8 +56,8 @@ func writeLog(msg checkMessage) error {
 	}
 	defer f.Close()
 
-	_, err = fmt.Fprintf(f, "%s,%s,%d,%s\n", msg.discordID, msg.username,
-		msg.time.Unix(), msg.checkType)
+	_, err = fmt.Fprintf(f, "%s,%s,%d,%s\n", msg.DiscordID, msg.Username,
+		msg.Timestamp.Unix(), msg.CheckType)
 	if err != nil {
 		return fmt.Errorf("unable to write mesg to check log file: %s", err)
 	}
