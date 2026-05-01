@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -10,8 +11,21 @@ import (
 	"github.com/joho/godotenv"
 )
 
+var (
+	logOutput = flag.String("f", "/dev/stderr", "the location to write the logs to")
+)
+
 func main() {
-	err := godotenv.Load()
+	flag.Parse()
+
+	f, err := os.OpenFile(*logOutput, os.O_RDWR|os.O_CREATE, 0666)
+	if err != nil {
+		log.Fatalf("error log file: %v", err)
+	}
+	log.SetOutput(f)
+	log.Println("logging to", *logOutput)
+
+	err = godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
