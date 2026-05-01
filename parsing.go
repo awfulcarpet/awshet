@@ -3,7 +3,6 @@ package main
 import (
 	"errors"
 	"fmt"
-	"log"
 	"regexp"
 	"strconv"
 	"strings"
@@ -41,6 +40,7 @@ func parseCheckMessage(message string) (time.Time, error) {
 	nowRegex := regexp.MustCompile("now")
 	// this will match 1+ sequence of characters, an optional ':' and
 	// additional 1+sequence of characters
+	// we are intentionally making this loose in order to give precise feedback
 	hhmmRegex := regexp.MustCompile("([0-9a-zA-Z]*)(:)?([0-9a-zA-Z]*)")
 	currentTime := time.Now()
 
@@ -52,7 +52,6 @@ func parseCheckMessage(message string) (time.Time, error) {
 	if date == "" {
 		return time.Time{}, errors.New("invalid time supplied: unsupported format")
 	}
-	log.Println(date)
 
 	hour, minute, err := parseTime(date)
 	if err != nil {
