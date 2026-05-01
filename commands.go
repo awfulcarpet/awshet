@@ -67,16 +67,13 @@ func slashCommandHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
 }
 
 func checkin(s *discordgo.Session, i *discordgo.InteractionCreate) {
-	options := i.ApplicationCommandData().Options
-	for _, v := range options {
-		log.Println(v)
-	}
+	time := i.ApplicationCommandData().GetOption("time").StringValue()
 	err := s.InteractionRespond(
 		i.Interaction,
 		&discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseChannelMessageWithSource,
 			Data: &discordgo.InteractionResponseData{
-				Content: "Hello world!",
+				Content: time,
 			},
 		},
 	)
