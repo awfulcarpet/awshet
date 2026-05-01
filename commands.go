@@ -61,9 +61,9 @@ func slashCommandHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	data := i.ApplicationCommandData()
 	switch data.Name {
 	case "checkin":
-		checkin(s, i)
+		check("in", s, i)
 	case "checkout":
-		checkin(s, i)
+		check("out", s, i)
 	}
 }
 
@@ -82,10 +82,10 @@ func sendStringResponse(mesg string, s *discordgo.Session, i *discordgo.Interact
 	}
 }
 
-func checkin(s *discordgo.Session, i *discordgo.InteractionCreate) {
+func check(checkType checkType, s *discordgo.Session, i *discordgo.InteractionCreate) {
 	time := i.ApplicationCommandData().GetOption("time").StringValue()
 	// TODO: Null checks for non-guild servers
-	log.Printf("%s invoked /checkin", i.Member.User.Username)
+	log.Printf("%s invoked /check%s %s", i.Member.User.Username, checkType, time)
 
 	checkinTime, err := parseCheckMessage(time)
 	if err != nil {
@@ -97,12 +97,12 @@ func checkin(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		username:  i.Member.User.Username,
 		discordID: i.Member.User.ID,
 		time:      checkinTime,
-		checkType: "in",
+		checkType: checkType,
 	}
 
 	writeLog(msg)
 
-	successMessage := fmt.Sprintf(":white_check_mark: Checked in %s at %02d:%02d on %02d/%02d\n", i.Member.User.Username,
+	successMessage := fmt.Sprintf(":white_check_mark: Checked %s %s at %02d:%02d on %02d/%02d\n", checkType, i.Member.User.Username,
 		checkinTime.Hour(), checkinTime.Minute(), checkinTime.Month(), checkinTime.Day())
 
 	sendStringResponse(successMessage, s, i)
