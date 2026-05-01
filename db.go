@@ -1,29 +1,28 @@
 package main
 
 import (
-	"encoding/csv"
-	"errors"
 	"fmt"
 	"log"
 	"os"
-	"strconv"
 	"time"
+
+	"github.com/gocarina/gocsv"
 )
 
 type checkType string
 
 type checkMessage struct {
-	username  string
-	discordID string
-	time      time.Time
-	checkType checkType
+	username  string    `csv:"Username"`
+	discordID string    `csv:"Discord ID"`
+	time      time.Time `csv:"Timestamp"`
+	checkType checkType `csv:"Check Type"`
 }
 
 type userLog struct {
-	username   string  `csv:"username"`
-	discordID  string  `csv:"discordID"`
-	totalDays  int     `csv:"totalDays"`
-	totalHours float32 `csv:"totalHours"`
+	Username   string  `csv:"Username"`
+	DiscordID  string  `csv:"Discord ID"`
+	TotalDays  int     `csv:"Total Days"`
+	TotalHours float32 `csv:"Total Hours"`
 }
 
 var (
@@ -44,35 +43,40 @@ func writeLog(msg checkMessage) {
 		log.Printf("ERR: Unable to write mesg to %s: %s\n", CheckLogFileName, err)
 	}
 
-	fmt.Println(readUserLog())
+	userLogs := readUserLog()
+	writeNewUserLogs(userLogs)
 }
 
-func readUserLog() ([]userLog, error) {
-	file, err := os.Open(UsersLogfileName)
+func writeNewUserLogs(userLogs []*userLog) {
+	writeUserLog(userLogs)
+}
+
+func readUserLog() []*userLog {
+	f, err := os.OpenFile(UsersLogfileName, os.O_RDWR, os.ModePerm)
 	if err != nil {
-		fmt.Println(err)
+		log.Printf("ERR: Unable to open file %s: %s\n", UsersLogfileName, err)
 	}
-	reader := csv.NewReader(file)
+	defer f.Close()
 
-	users := []userLog{}
-	line, err := reader.Read()
+	var userLogs []*userLog
+	if err = gocsv.UnmarshalFile(f, &userLogs); err != nil {
+		log.Printf("ERR: Unable to parse file %s: %s\n", UsersLogfileName, err)
+	}
+
+	return userLogs
+}
+
+func writeUserLog(userLogs []*userLog) {
+	f, err := os.OpenFile(UsersLogfileName, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, os.ModePerm)
+
+	// Check for errors when opening or creating the file. If there's an error, panic.
 	if err != nil {
-		return users, err
+		log.Printf("ERR: Unable to open file %s: %s\n", UsersLogfileName, err)
 	}
+	defer f.Close()
 
-	if len(line) < 4 {
-		return users, errors.New("too few columns in user log file")
+	// Marshal the userLogs into the CSV format and write them to the result.csv file
+	if err = gocsv.MarshalFile(&userLogs, f); err != nil {
+		log.Printf("ERR: Unable to parse file %s: %s\n", UsersLogfileName, err)
 	}
-
-	totalDays, _ := strconv.Atoi(line[2])
-	totalHours, _ := strconv.Atoi(line[3])
-
-	users = append(users, userLog{
-		username:   line[0],
-		discordID:  line[1],
-		totalDays:  totalDays,
-		totalHours: float32(totalHours),
-	})
-
-	return users, nil
 }
