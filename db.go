@@ -51,8 +51,10 @@ func writeLog(msg checkMessage) error {
 	return nil
 }
 
+// TODO (may be unneeded) write logic for parsing total days and hours and write
 func writeNewUserLogs(userLogs []*userLog) error {
-	return writeUserLog(userLogs)
+	return nil
+	// return writeUserLog(userLogs)
 }
 
 func readUserLog() ([]*userLog, error) {
