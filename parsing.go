@@ -11,14 +11,26 @@ import (
 
 func parseTime(str string) (int, int, error) {
 	hour_and_minute := strings.Split(str, ":")
+	if len(hour_and_minute) < 2 {
+		return -1, -1, errors.New("must have a ':' deliminating hours and minutes")
+	}
+
 	hour, err := strconv.Atoi(hour_and_minute[0])
 	if err != nil {
 		return -1, -1, errors.New("invalid number")
 	}
 
+	if hour > 24 {
+		return -1, -1, errors.New("hour > 24")
+	}
+
 	minute, err := strconv.Atoi(hour_and_minute[1])
 	if err != nil {
 		return -1, -1, errors.New("invalid number")
+	}
+
+	if minute >= 60 {
+		return -1, -1, errors.New("minute >= 60")
 	}
 
 	return hour, minute, nil
