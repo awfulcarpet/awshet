@@ -7,14 +7,26 @@ import (
 )
 
 var (
+	timeOption = &discordgo.ApplicationCommandOption{
+		Type:        discordgo.ApplicationCommandOptionString,
+		Name:        "time",
+		Description: "a date value in the form mm/dd or now to record time",
+		Required:    true,
+	}
 	commands = []*discordgo.ApplicationCommand{
 		{
 			Name:        "checkin",
 			Description: "Checks students in and logs time and day",
+			Options: []*discordgo.ApplicationCommandOption{
+				timeOption,
+			},
 		},
 		{
 			Name:        "checkout",
 			Description: "Checks students out and logs time and day",
+			Options: []*discordgo.ApplicationCommandOption{
+				timeOption,
+			},
 		},
 	}
 	registeredCommands = make([]*discordgo.ApplicationCommand, len(commands))
@@ -58,5 +70,17 @@ func checkin(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	options := i.ApplicationCommandData().Options
 	for _, v := range options {
 		log.Println(v)
+	}
+	err := s.InteractionRespond(
+		i.Interaction,
+		&discordgo.InteractionResponse{
+			Type: discordgo.InteractionResponseChannelMessageWithSource,
+			Data: &discordgo.InteractionResponseData{
+				Content: "Hello world!",
+			},
+		},
+	)
+	if err != nil {
+		log.Println("Unable to send response")
 	}
 }
