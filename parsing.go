@@ -50,7 +50,7 @@ func parseCheckMessage(message string) (time.Time, error) {
 
 	date := hhmmRegex.FindString(message)
 	if date == "" {
-		return time.Time{}, errors.New("invalid time supplied: unsupported format")
+		return time.Time{}, fmt.Errorf("invalid time supplied: unsupported format")
 	}
 
 	hour, minute, err := parseTime(date)
