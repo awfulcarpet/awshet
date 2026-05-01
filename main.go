@@ -32,8 +32,6 @@ func main() {
 		log.Printf("Logged in as: %v#%v", s.State.User.Username, s.State.User.Discriminator)
 	})
 
-	// dg.AddHandler(messageCreate)
-
 	err = dg.Open()
 	if err != nil {
 		fmt.Println("error opening connection,", err)
