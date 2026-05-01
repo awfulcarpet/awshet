@@ -51,14 +51,14 @@ func updateDB(msg checkMessage) error {
 func writeLog(msg checkMessage) error {
 	f, err := os.OpenFile(CheckLogFileName, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
 	if err != nil {
-		return fmt.Errorf("unable to open check log file: %s\n", err)
+		return fmt.Errorf("unable to open check log file: %s", err)
 	}
 	defer f.Close()
 
 	_, err = fmt.Fprintf(f, "%s,%s,%d,%s\n", msg.discordID, msg.username,
 		msg.time.Unix(), msg.checkType)
 	if err != nil {
-		return fmt.Errorf("unable to write mesg to check log file: %s\n", err)
+		return fmt.Errorf("unable to write mesg to check log file: %s", err)
 	}
 
 	return nil
@@ -73,13 +73,13 @@ func writeNewUserLogs(userLogs []*userLog) error {
 func readUserLog() ([]*userLog, error) {
 	f, err := os.OpenFile(UsersLogfileName, os.O_RDWR|os.O_CREATE, os.ModePerm)
 	if err != nil {
-		return nil, fmt.Errorf("unable to open users file for reading: %s\n", err)
+		return nil, fmt.Errorf("unable to open users file for reading: %s", err)
 	}
 	defer f.Close()
 
 	var userLogs []*userLog
 	if err = gocsv.UnmarshalFile(f, &userLogs); err != nil {
-		return nil, fmt.Errorf("unable to parse users file (%s): %s\n", UsersLogfileName, err)
+		return nil, fmt.Errorf("unable to parse users file (%s): %s", UsersLogfileName, err)
 	}
 
 	return userLogs, nil
@@ -90,13 +90,13 @@ func writeUserLog(userLogs []*userLog) error {
 
 	// Check for errors when opening or creating the file. If there's an error, panic.
 	if err != nil {
-		return fmt.Errorf("unable to open users file for writing: %s\n", err)
+		return fmt.Errorf("unable to open users file for writing: %s", err)
 	}
 	defer f.Close()
 
 	// Marshal the userLogs into the CSV format and write them to the result.csv file
 	if err = gocsv.MarshalFile(&userLogs, f); err != nil {
-		return fmt.Errorf("unable to write to users file: %s\n", err)
+		return fmt.Errorf("unable to write to users file: %s", err)
 	}
 	return nil
 }
