@@ -38,7 +38,8 @@ func parseTime(str string) (int, int, error) {
 
 func parseCheckMessage(message string) (time.Time, error) {
 	nowRegex := regexp.MustCompile("now")
-	hhmmRegex := regexp.MustCompile("([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]")
+	// hhmmRegex := regexp.MustCompile("([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]")
+	hhmmRegex := regexp.MustCompile("([0-9]|[0-9]*)(:)?[0-9]*")
 	currentTime := time.Now()
 
 	if nowRegex.FindString(message) == "now" {
@@ -46,13 +47,14 @@ func parseCheckMessage(message string) (time.Time, error) {
 	}
 
 	date := hhmmRegex.FindString(message)
-	if date != "" {
-		hour, minute, err := parseTime(date)
-		if err != nil {
-			return time.Time{}, fmt.Errorf("invalid time supplied: %s", err)
-		}
-		return time.Date(currentTime.Year(), currentTime.Month(), currentTime.Day(), hour, minute, 0, 0, time.UTC), nil
+	if date == "" {
+		return time.Time{}, errors.New("invalid time supplied: unsupported format")
 	}
 
-	return time.Time{}, errors.New("invalid time supplied: unsupported format")
+	hour, minute, err := parseTime(date)
+	if err != nil {
+		return time.Time{}, fmt.Errorf("invalid time supplied: %s", err)
+	}
+	return time.Date(currentTime.Year(), currentTime.Month(), currentTime.Day(), hour, minute, 0, 0, time.UTC), nil
+
 }
