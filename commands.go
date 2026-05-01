@@ -68,6 +68,9 @@ func slashCommandHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
 
 func checkin(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	time := i.ApplicationCommandData().GetOption("time").StringValue()
+	// TODO: Null checks for non-guild servers
+	log.Printf("%s invoked /checkin", i.Member.User.Username)
+
 	err := s.InteractionRespond(
 		i.Interaction,
 		&discordgo.InteractionResponse{
