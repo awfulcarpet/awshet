@@ -66,7 +66,7 @@ func writeLog(msg checkMessage) error {
 }
 
 func readUserLog() ([]*userLog, error) {
-	f, err := os.OpenFile(UsersLogfileName, os.O_RDWR|os.O_CREATE, os.ModePerm)
+	f, err := os.OpenFile(UsersLogfileName, os.O_RDWR|os.O_CREATE, 0644)
 	if err != nil {
 		return nil, fmt.Errorf("unable to open users file for reading: %s", err)
 	}
@@ -90,7 +90,7 @@ func writeNewUserLogs(userLogs []*userLog) error {
 }
 
 func writeUserLog(userLogs []*userLog) error {
-	f, err := os.OpenFile(UsersLogfileName, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, os.ModePerm)
+	f, err := os.OpenFile(UsersLogfileName, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
 
 	// Check for errors when opening or creating the file. If there's an error, panic.
 	if err != nil {
