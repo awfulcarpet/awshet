@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"time"
 
@@ -64,12 +65,6 @@ func writeLog(msg checkMessage) error {
 	return nil
 }
 
-// TODO (may be unneeded) write logic for parsing total days and hours and write
-func writeNewUserLogs(userLogs []*userLog) error {
-	return nil
-	// return writeUserLog(userLogs)
-}
-
 func readUserLog() ([]*userLog, error) {
 	f, err := os.OpenFile(UsersLogfileName, os.O_RDWR|os.O_CREATE, os.ModePerm)
 	if err != nil {
@@ -78,11 +73,20 @@ func readUserLog() ([]*userLog, error) {
 	defer f.Close()
 
 	var userLogs []*userLog
-	if err = gocsv.UnmarshalFile(f, &userLogs); err != nil {
+	err = gocsv.UnmarshalFile(f, &userLogs)
+	if err == io.EOF || err == gocsv.ErrEmptyCSVFile {
+		return userLogs, nil
+	}
+	if err != nil {
 		return nil, fmt.Errorf("unable to parse users file (%s): %s", UsersLogfileName, err)
 	}
 
 	return userLogs, nil
+}
+
+// TODO (may be unneeded) write logic for parsing total days and hours and write
+func writeNewUserLogs(userLogs []*userLog) error {
+	return writeUserLog(userLogs)
 }
 
 func writeUserLog(userLogs []*userLog) error {
