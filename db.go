@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"time"
 
@@ -30,53 +29,59 @@ var (
 	UsersLogfileName = "users.csv"
 )
 
-func writeLog(msg checkMessage) {
+func writeLog(msg checkMessage) error {
 	f, err := os.OpenFile(CheckLogFileName, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
 	if err != nil {
-		log.Printf("ERR: unable to open %s: %s\n", CheckLogFileName, err)
+		return fmt.Errorf("unable to open check log file: %s\n", err)
 	}
 	defer f.Close()
 
 	_, err = fmt.Fprintf(f, "%s,%s,%d,%s\n", msg.discordID, msg.username,
 		msg.time.Unix(), msg.checkType)
 	if err != nil {
-		log.Printf("ERR: Unable to write mesg to %s: %s\n", CheckLogFileName, err)
+		return fmt.Errorf("unable to write mesg to check log file: %s\n", err)
 	}
 
-	userLogs := readUserLog()
+	userLogs, err := readUserLog()
+	if err != nil {
+		return err
+	}
+
 	writeNewUserLogs(userLogs)
+	return nil
 }
 
-func writeNewUserLogs(userLogs []*userLog) {
-	writeUserLog(userLogs)
+func writeNewUserLogs(userLogs []*userLog) error {
+	return writeUserLog(userLogs)
 }
 
-func readUserLog() []*userLog {
+func readUserLog() ([]*userLog, error) {
 	f, err := os.OpenFile(UsersLogfileName, os.O_RDWR, os.ModePerm)
 	if err != nil {
-		log.Printf("ERR: Unable to open file %s: %s\n", UsersLogfileName, err)
+		return nil, fmt.Errorf("unable to open users file for reading: %s\n", err)
 	}
 	defer f.Close()
 
 	var userLogs []*userLog
 	if err = gocsv.UnmarshalFile(f, &userLogs); err != nil {
-		log.Printf("ERR: Unable to parse file %s: %s\n", UsersLogfileName, err)
+		return nil, fmt.Errorf("unable to parse users file (%s): %s\n", UsersLogfileName, err)
 	}
 
-	return userLogs
+	return userLogs, nil
 }
 
-func writeUserLog(userLogs []*userLog) {
+func writeUserLog(userLogs []*userLog) error {
 	f, err := os.OpenFile(UsersLogfileName, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, os.ModePerm)
 
 	// Check for errors when opening or creating the file. If there's an error, panic.
 	if err != nil {
-		log.Printf("ERR: Unable to open file %s: %s\n", UsersLogfileName, err)
+		return fmt.Errorf("unable to open users file for writing: %s\n", err)
 	}
 	defer f.Close()
 
 	// Marshal the userLogs into the CSV format and write them to the result.csv file
 	if err = gocsv.MarshalFile(&userLogs, f); err != nil {
-		log.Printf("ERR: Unable to parse file %s: %s\n", UsersLogfileName, err)
+		return fmt.Errorf("unable to write to users file: %s\n", err)
 	}
+	return nil
 }

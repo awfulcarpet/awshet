@@ -100,7 +100,12 @@ func check(checkType checkType, s *discordgo.Session, i *discordgo.InteractionCr
 		checkType: checkType,
 	}
 
-	writeLog(msg)
+	err = writeLog(msg)
+
+	if err != nil {
+		sendStringResponse(fmt.Sprintf(":x: %s", err.Error()), s, i)
+		return
+	}
 
 	successMessage := fmt.Sprintf(":white_check_mark: Checked %s %s at %02d:%02d on %02d/%02d\n", checkType, i.Member.User.Username,
 		checkinTime.Hour(), checkinTime.Minute(), checkinTime.Month(), checkinTime.Day())
