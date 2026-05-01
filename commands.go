@@ -89,11 +89,12 @@ func checkin(s *discordgo.Session, i *discordgo.InteractionCreate) {
 
 	checkinTime, err := parseCheckMessage(time)
 	if err != nil {
-		sendStringResponse(err.Error(), s, i)
+		sendStringResponse(fmt.Sprintf(":x: %s", err.Error()), s, i)
 		return
 	}
 
-	dateString := fmt.Sprintf("%02d/%02d", checkinTime.Month(), checkinTime.Day())
+	successMessage := fmt.Sprintf(":white_check_mark: Checked in %s at %02d:%02d on %02d/%02d\n", i.Member.User.Username,
+		checkinTime.Hour(), checkinTime.Minute(), checkinTime.Month(), checkinTime.Day())
 
-	sendStringResponse(dateString, s, i)
+	sendStringResponse(successMessage, s, i)
 }
