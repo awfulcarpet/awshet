@@ -78,7 +78,7 @@ func sendStringResponse(mesg string, s *discordgo.Session, i *discordgo.Interact
 		},
 	)
 	if err != nil {
-		log.Println("Unable to send response")
+		log.Println("ERR: Unable to send response")
 	}
 }
 
@@ -92,6 +92,15 @@ func checkin(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		sendStringResponse(fmt.Sprintf(":x: %s", err.Error()), s, i)
 		return
 	}
+
+	msg := checkMessage{
+		username:  i.Member.User.Username,
+		discordID: i.Member.User.ID,
+		time:      checkinTime,
+		checkType: "in",
+	}
+
+	writeLog(msg)
 
 	successMessage := fmt.Sprintf(":white_check_mark: Checked in %s at %02d:%02d on %02d/%02d\n", i.Member.User.Username,
 		checkinTime.Hour(), checkinTime.Minute(), checkinTime.Month(), checkinTime.Day())
