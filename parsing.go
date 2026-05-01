@@ -6,22 +6,15 @@ import (
 	"time"
 )
 
-func parseCheckMessage(message string) (string, time.Time, error) {
-	typeRegex := regexp.MustCompile("(in|out)")
-	// TODO: implement date string
+func parseCheckMessage(message string) (time.Time, error) {
 	nowRegex := regexp.MustCompile("now")
-
-	checkType := typeRegex.FindString(message)
-	if checkType == "" {
-		return checkType, time.Time{}, errors.New("invalid command supplied")
-	}
 
 	date := nowRegex.FindString(message)
 	if date == "" {
-		return checkType, time.Time{}, errors.New("invalid time supplied")
+		return time.Time{}, errors.New("invalid time supplied")
 	}
 
 	time := time.Now()
 
-	return checkType, time, nil
+	return time, nil
 }

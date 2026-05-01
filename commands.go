@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/bwmarrin/discordgo"
@@ -66,21 +67,34 @@ func slashCommandHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	}
 }
 
-func checkin(s *discordgo.Session, i *discordgo.InteractionCreate) {
-	time := i.ApplicationCommandData().GetOption("time").StringValue()
-	// TODO: Null checks for non-guild servers
-	log.Printf("%s invoked /checkin", i.Member.User.Username)
+func sendStringResponse(mesg string, s *discordgo.Session, i *discordgo.InteractionCreate) {
 
 	err := s.InteractionRespond(
 		i.Interaction,
 		&discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseChannelMessageWithSource,
 			Data: &discordgo.InteractionResponseData{
-				Content: time,
+				Content: mesg,
 			},
 		},
 	)
 	if err != nil {
 		log.Println("Unable to send response")
 	}
+}
+
+func checkin(s *discordgo.Session, i *discordgo.InteractionCreate) {
+	time := i.ApplicationCommandData().GetOption("time").StringValue()
+	// TODO: Null checks for non-guild servers
+	log.Printf("%s invoked /checkin", i.Member.User.Username)
+
+	checkinTime, err := parseCheckMessage(time)
+	if err != nil {
+		sendStringResponse(checkinTime.Format(":skull:"), s, i)
+		return
+	}
+
+	dateString := fmt.Sprintf("%02d/%02d", checkinTime.Month(), checkinTime.Day())
+
+	sendStringResponse(dateString, s, i)
 }
