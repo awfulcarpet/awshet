@@ -86,7 +86,12 @@ func sendStringResponse(mesg string, s *discordgo.Session, i *discordgo.Interact
 
 func check(checkType checkType, s *discordgo.Session, i *discordgo.InteractionCreate) {
 	time := i.ApplicationCommandData().GetOption("time").StringValue()
-	// TODO: Null checks for non-guild servers
+
+	if i.Member == nil {
+		sendStringResponse(":x: awshet does not answer DMs", s, i)
+		return
+	}
+
 	log.Printf("%s invoked /check%s %s", i.Member.User.Username, checkType, time)
 
 	checkinTime, err := parseCheckMessage(time)
@@ -97,6 +102,7 @@ func check(checkType checkType, s *discordgo.Session, i *discordgo.InteractionCr
 
 	msg := checkMessage{
 		Username:  i.Member.User.Username,
+		Name:      i.Member.Nick,
 		DiscordID: i.Member.User.ID,
 		Timestamp: checkinTime,
 		CheckType: checkType,
@@ -110,8 +116,8 @@ func check(checkType checkType, s *discordgo.Session, i *discordgo.InteractionCr
 	}
 
 	sendStringResponse(
-		fmt.Sprintf(":white_check_mark: Checked %s %s at %02d:%02d on %02d/%02d",
-			checkType, i.Member.User.Username, checkinTime.Hour(),
+		fmt.Sprintf(":white_check_mark: Checked %s %s (%s) at %02d:%02d on %02d/%02d",
+			checkType, msg.Name, msg.Username, checkinTime.Hour(),
 			checkinTime.Minute(), checkinTime.Month(), checkinTime.Day()),
 		s, i)
 }

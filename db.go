@@ -12,15 +12,17 @@ import (
 type checkType string
 
 type checkMessage struct {
-	Username  string    `csv:"Username"`
 	DiscordID string    `csv:"Discord ID"`
+	Username  string    `csv:"Username"`
+	Name      string    `csv:"Name"`
 	Timestamp time.Time `csv:"Timestamp"`
 	CheckType checkType `csv:"Check Type"`
 }
 
 type userLog struct {
-	Username   string  `csv:"Username"`
 	DiscordID  string  `csv:"Discord ID"`
+	Username   string  `csv:"Username"`
+	Name       string  `csv:"Name"`
 	TotalDays  int     `csv:"Total Days"`
 	TotalHours float32 `csv:"Total Hours"`
 }
@@ -56,7 +58,7 @@ func writeLog(msg checkMessage) error {
 	}
 	defer f.Close()
 
-	_, err = fmt.Fprintf(f, "%s,%s,%d,%s\n", msg.DiscordID, msg.Username,
+	_, err = fmt.Fprintf(f, "%s,%s,%s,%d,%s\n", msg.DiscordID, msg.Username, msg.Name,
 		msg.Timestamp.Unix(), msg.CheckType)
 	if err != nil {
 		return fmt.Errorf("unable to write mesg to check log file: %s", err)
