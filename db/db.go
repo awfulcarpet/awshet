@@ -1,4 +1,4 @@
-package main
+package db
 
 import (
 	"fmt"
@@ -9,14 +9,14 @@ import (
 	"github.com/gocarina/gocsv"
 )
 
-type checkType string
+type CheckType string
 
-type checkMessage struct {
+type CheckMessage struct {
 	DiscordID string    `csv:"Discord ID"`
 	Username  string    `csv:"Username"`
 	Name      string    `csv:"Name"`
 	Timestamp int64     `csv:"Timestamp"`
-	CheckType checkType `csv:"Check Type"`
+	CheckType CheckType `csv:"Check Type"`
 }
 
 var (
@@ -24,7 +24,7 @@ var (
 	UsersLogfileName = "users.csv"
 )
 
-func WriteLog(msg checkMessage) error {
+func WriteLog(msg CheckMessage) error {
 	f, err := os.OpenFile(CheckLogFileName, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
 	if err != nil {
 		return fmt.Errorf("unable to open check log file: %s", err)
@@ -51,14 +51,14 @@ func WriteLog(msg checkMessage) error {
 	return nil
 }
 
-func ReadLog() ([]*checkMessage, error) {
+func ReadLog() ([]*CheckMessage, error) {
 	f, err := os.OpenFile(CheckLogFileName, os.O_RDWR|os.O_CREATE, 0644)
 	if err != nil {
 		return nil, fmt.Errorf("unable to open users file for reading: %s", err)
 	}
 	defer f.Close()
 
-	var logs []*checkMessage
+	var logs []*CheckMessage
 	err = gocsv.UnmarshalFile(f, &logs)
 	if err == io.EOF || err == gocsv.ErrEmptyCSVFile {
 		return logs, nil

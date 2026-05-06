@@ -1,6 +1,7 @@
 package main
 
 import (
+	"awshet/commands"
 	"flag"
 	"fmt"
 	"log"
@@ -53,7 +54,7 @@ func main() {
 	}
 	defer dg.Close()
 
-	RegisterCommands(dg)
+	commands.RegisterCommands(dg)
 
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt)
@@ -61,5 +62,5 @@ func main() {
 	<-stop
 
 	log.Println("Shutting Down")
-	// removeCommands(dg)
+	// commands.RemoveCommands(dg)
 }

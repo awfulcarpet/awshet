@@ -1,6 +1,8 @@
-package main
+package commands
 
 import (
+	"awshet/db"
+	"awshet/parsing"
 	"fmt"
 	"log"
 
@@ -91,7 +93,7 @@ func sendStringResponse(mesg string, s *discordgo.Session, i *discordgo.Interact
 	log.Printf("sent '%s' to discord\n", mesg)
 }
 
-func check(checkType checkType, s *discordgo.Session, i *discordgo.InteractionCreate) {
+func check(checkType db.CheckType, s *discordgo.Session, i *discordgo.InteractionCreate) {
 	time := i.ApplicationCommandData().GetOption("time").StringValue()
 
 	if i.Member == nil {
@@ -101,13 +103,13 @@ func check(checkType checkType, s *discordgo.Session, i *discordgo.InteractionCr
 
 	log.Printf("%s invoked /check%s %s", i.Member.User.Username, checkType, time)
 
-	checkinTime, err := ParseCheckMessage(time)
+	checkinTime, err := parsing.ParseCheckMessage(time)
 	if err != nil {
 		sendStringResponse(fmt.Sprintf(":x: %s", err.Error()), s, i)
 		return
 	}
 
-	msg := checkMessage{
+	msg := db.CheckMessage{
 		Username:  i.Member.User.Username,
 		Name:      i.Member.Nick,
 		DiscordID: i.Member.User.ID,
@@ -115,7 +117,7 @@ func check(checkType checkType, s *discordgo.Session, i *discordgo.InteractionCr
 		CheckType: checkType,
 	}
 
-	err = WriteLog(msg)
+	err = db.WriteLog(msg)
 
 	if err != nil {
 		sendStringResponse(fmt.Sprintf(":x: %s", err.Error()), s, i)
@@ -137,7 +139,7 @@ func getTime(s *discordgo.Session, i *discordgo.InteractionCreate) {
 
 	log.Printf("%s invoked /time", i.Member.User.Username)
 
-	days, hours, err := CalculateTime(i.Member.User.ID)
+	days, hours, err := db.CalculateTime(i.Member.User.ID)
 
 	if err != nil {
 		sendStringResponse(fmt.Sprintf(":x: %s", err), s, i)
