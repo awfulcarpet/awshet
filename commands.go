@@ -104,7 +104,7 @@ func check(checkType checkType, s *discordgo.Session, i *discordgo.InteractionCr
 		Username:  i.Member.User.Username,
 		Name:      i.Member.Nick,
 		DiscordID: i.Member.User.ID,
-		Timestamp: checkinTime,
+		Timestamp: checkinTime.Unix(),
 		CheckType: checkType,
 	}
 
