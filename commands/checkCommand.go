@@ -9,7 +9,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-func check(checkType db.CheckType, s *discordgo.Session, i *discordgo.InteractionCreate) {
+func checkCommand(checkType db.CheckType, s *discordgo.Session, i *discordgo.InteractionCreate) {
 	time := i.ApplicationCommandData().GetOption("time").StringValue()
 
 	if i.Member == nil {

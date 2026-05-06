@@ -43,7 +43,7 @@ func calculateTime(discordID string) (int, float32, error) {
 	return len(days), hours, nil
 }
 
-func getTime(s *discordgo.Session, i *discordgo.InteractionCreate) {
+func timeCommand(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	if i.Member == nil {
 		sendStringResponse(":x: awshet does not answer DMs", s, i)
 		return

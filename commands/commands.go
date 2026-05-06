@@ -64,11 +64,11 @@ func slashCommandHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	data := i.ApplicationCommandData()
 	switch data.Name {
 	case "checkin":
-		check("in", s, i)
+		checkCommand("in", s, i)
 	case "checkout":
-		check("out", s, i)
+		checkCommand("out", s, i)
 	case "time":
-		getTime(s, i)
+		timeCommand(s, i)
 	}
 }
 
