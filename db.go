@@ -19,14 +19,6 @@ type checkMessage struct {
 	CheckType checkType `csv:"Check Type"`
 }
 
-type userLog struct {
-	DiscordID  string  `csv:"Discord ID"`
-	Username   string  `csv:"Username"`
-	Name       string  `csv:"Name"`
-	TotalDays  int     `csv:"Total Days"`
-	TotalHours float32 `csv:"Total Hours"`
-}
-
 var (
 	CheckLogFileName = "checklog.csv"
 	UsersLogfileName = "users.csv"
@@ -119,44 +111,4 @@ func calculateTime(discordID string) (int, float32, error) {
 	}
 
 	return len(days), hours, nil
-}
-
-func readUserLog() ([]*userLog, error) {
-	f, err := os.OpenFile(UsersLogfileName, os.O_RDWR|os.O_CREATE, 0644)
-	if err != nil {
-		return nil, fmt.Errorf("unable to open users file for reading: %s", err)
-	}
-	defer f.Close()
-
-	var userLogs []*userLog
-	err = gocsv.UnmarshalFile(f, &userLogs)
-	if err == io.EOF || err == gocsv.ErrEmptyCSVFile {
-		return userLogs, nil
-	}
-	if err != nil {
-		return nil, fmt.Errorf("unable to parse users file (%s): %s", UsersLogfileName, err)
-	}
-
-	return userLogs, nil
-}
-
-// TODO (may be unneeded) write logic for parsing total days and hours and write
-func writeNewUserLogs(userLogs []*userLog) error {
-	return writeUserLog(userLogs)
-}
-
-func writeUserLog(userLogs []*userLog) error {
-	f, err := os.OpenFile(UsersLogfileName, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
-
-	// Check for errors when opening or creating the file. If there's an error, panic.
-	if err != nil {
-		return fmt.Errorf("unable to open users file for writing: %s", err)
-	}
-	defer f.Close()
-
-	// Marshal the userLogs into the CSV format and write them to the result.csv file
-	if err = gocsv.MarshalFile(&userLogs, f); err != nil {
-		return fmt.Errorf("unable to write to users file: %s", err)
-	}
-	return nil
 }
