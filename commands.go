@@ -29,6 +29,10 @@ var (
 				timeOption,
 			},
 		},
+		{
+			Name:        "time",
+			Description: "lists currently logged time for user",
+		},
 	}
 	registeredCommands = make([]*discordgo.ApplicationCommand, len(commands))
 )
@@ -64,6 +68,8 @@ func slashCommandHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		check("in", s, i)
 	case "checkout":
 		check("out", s, i)
+	case "time":
+		getTime(s, i)
 	}
 }
 
@@ -120,4 +126,24 @@ func check(checkType checkType, s *discordgo.Session, i *discordgo.InteractionCr
 			checkType, msg.Name, msg.Username, checkinTime.Hour(),
 			checkinTime.Minute(), checkinTime.Month(), checkinTime.Day()),
 		s, i)
+}
+
+func getTime(s *discordgo.Session, i *discordgo.InteractionCreate) {
+	if i.Member == nil {
+		sendStringResponse(":x: awshet does not answer DMs", s, i)
+		return
+	}
+
+	log.Printf("%s invoked /time", i.Member.User.Username)
+
+	days, hours, err := calculateTime(i.Member.User.ID)
+
+	if err != nil {
+		sendStringResponse(fmt.Sprintf(":x: %s", err), s, i)
+		return
+	}
+
+	sendStringResponse(
+		fmt.Sprintf("%s has logged %.2f hours over the course of %d days",
+			i.Member.Nick, hours, days), s, i)
 }
