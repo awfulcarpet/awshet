@@ -53,7 +53,7 @@ func main() {
 	}
 	defer dg.Close()
 
-	registerCommands(dg)
+	RegisterCommands(dg)
 
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt)

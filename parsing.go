@@ -36,7 +36,7 @@ func parseTime(str string) (int, int, error) {
 	return hour, minute, nil
 }
 
-func parseCheckMessage(message string) (time.Time, error) {
+func ParseCheckMessage(message string) (time.Time, error) {
 	nowRegex := regexp.MustCompile("now")
 	// this will match 1+ sequence of characters, an optional ':' and
 	// additional 1+sequence of characters

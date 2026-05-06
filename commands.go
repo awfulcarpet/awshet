@@ -37,7 +37,7 @@ var (
 	registeredCommands = make([]*discordgo.ApplicationCommand, len(commands))
 )
 
-func registerCommands(dg *discordgo.Session) {
+func RegisterCommands(dg *discordgo.Session) {
 	log.Println("Creating all commands")
 	// for i, v := range commands {
 	// 	cmd, err := dg.ApplicationCommandCreate(dg.State.User.ID, "", v)
@@ -50,7 +50,7 @@ func registerCommands(dg *discordgo.Session) {
 	dg.AddHandler(slashCommandHandler)
 }
 
-func removeCommands(dg *discordgo.Session) {
+func RemoveCommands(dg *discordgo.Session) {
 	log.Println("Removing all Commands")
 
 	for _, v := range registeredCommands {
@@ -101,7 +101,7 @@ func check(checkType checkType, s *discordgo.Session, i *discordgo.InteractionCr
 
 	log.Printf("%s invoked /check%s %s", i.Member.User.Username, checkType, time)
 
-	checkinTime, err := parseCheckMessage(time)
+	checkinTime, err := ParseCheckMessage(time)
 	if err != nil {
 		sendStringResponse(fmt.Sprintf(":x: %s", err.Error()), s, i)
 		return
@@ -115,7 +115,7 @@ func check(checkType checkType, s *discordgo.Session, i *discordgo.InteractionCr
 		CheckType: checkType,
 	}
 
-	err = writeLog(msg)
+	err = WriteLog(msg)
 
 	if err != nil {
 		sendStringResponse(fmt.Sprintf(":x: %s", err.Error()), s, i)
@@ -137,7 +137,7 @@ func getTime(s *discordgo.Session, i *discordgo.InteractionCreate) {
 
 	log.Printf("%s invoked /time", i.Member.User.Username)
 
-	days, hours, err := calculateTime(i.Member.User.ID)
+	days, hours, err := CalculateTime(i.Member.User.ID)
 
 	if err != nil {
 		sendStringResponse(fmt.Sprintf(":x: %s", err), s, i)

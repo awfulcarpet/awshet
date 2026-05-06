@@ -24,7 +24,7 @@ var (
 	UsersLogfileName = "users.csv"
 )
 
-func writeLog(msg checkMessage) error {
+func WriteLog(msg checkMessage) error {
 	f, err := os.OpenFile(CheckLogFileName, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
 	if err != nil {
 		return fmt.Errorf("unable to open check log file: %s", err)
@@ -51,7 +51,7 @@ func writeLog(msg checkMessage) error {
 	return nil
 }
 
-func readLog() ([]*checkMessage, error) {
+func ReadLog() ([]*checkMessage, error) {
 	f, err := os.OpenFile(CheckLogFileName, os.O_RDWR|os.O_CREATE, 0644)
 	if err != nil {
 		return nil, fmt.Errorf("unable to open users file for reading: %s", err)
@@ -70,8 +70,8 @@ func readLog() ([]*checkMessage, error) {
 	return logs, nil
 }
 
-func calculateTime(discordID string) (int, float32, error) {
-	logs, err := readLog()
+func CalculateTime(discordID string) (int, float32, error) {
+	logs, err := ReadLog()
 	if err != nil {
 		return 0, 0, err
 	}
