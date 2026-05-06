@@ -85,6 +85,7 @@ func sendStringResponse(mesg string, s *discordgo.Session, i *discordgo.Interact
 	)
 	if err != nil {
 		log.Println("ERR: Unable to send response")
+		return
 	}
 
 	log.Printf("sent '%s' to discord\n", mesg)
