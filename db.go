@@ -24,15 +24,6 @@ var (
 	UsersLogfileName = "users.csv"
 )
 
-func updateDB(msg checkMessage) error {
-	err := writeLog(msg)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func writeLog(msg checkMessage) error {
 	f, err := os.OpenFile(CheckLogFileName, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
 	if err != nil {

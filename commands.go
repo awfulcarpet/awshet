@@ -115,7 +115,7 @@ func check(checkType checkType, s *discordgo.Session, i *discordgo.InteractionCr
 		CheckType: checkType,
 	}
 
-	err = updateDB(msg)
+	err = writeLog(msg)
 
 	if err != nil {
 		sendStringResponse(fmt.Sprintf(":x: %s", err.Error()), s, i)
