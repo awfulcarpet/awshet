@@ -62,5 +62,5 @@ func main() {
 	<-stop
 
 	log.Println("Shutting Down")
-	// commands.RemoveCommands(dg)
+	commands.RemoveCommands(dg)
 }
