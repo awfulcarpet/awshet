@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"time"
 
 	"github.com/gocarina/gocsv"
 )
@@ -94,12 +95,18 @@ func calculateTime(discordID string) (int, float32, error) {
 
 	var hours float32 = 0.0
 
+	days := make(map[time.Time]bool)
+
 	var curTime int64 = 0.0
 
 	for _, l := range logs {
 		if l.DiscordID != discordID {
 			continue
 		}
+
+		year, month, day := time.Unix(l.Timestamp, 0).Date()
+		k := time.Date(year, month, day, 0, 0, 0, 0, time.UTC)
+		days[k] = true
 
 		if l.CheckType == "in" {
 			curTime = l.Timestamp
@@ -111,7 +118,7 @@ func calculateTime(discordID string) (int, float32, error) {
 		}
 	}
 
-	return 0, hours, nil
+	return len(days), hours, nil
 }
 
 func readUserLog() ([]*userLog, error) {
