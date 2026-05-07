@@ -23,6 +23,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("error log file: %v", err)
 	}
+	defer f.Close()
 	log.SetOutput(f)
 	log.Println("logging to", *logOutput)
 
