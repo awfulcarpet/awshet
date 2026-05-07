@@ -36,6 +36,7 @@ func parseTime(str string) (int, int, error) {
 	return hour, minute, nil
 }
 
+// returns localtime from message
 func ParseCheckMessage(message string) (time.Time, error) {
 	nowRegex := regexp.MustCompile("now")
 	apmRegex := regexp.MustCompile("(?i)[ap]m")
@@ -63,9 +64,9 @@ func ParseCheckMessage(message string) (time.Time, error) {
 	}
 
 	if strings.ToLower(ampm) == "pm" {
-		return time.Date(currentTime.Year(), currentTime.Month(), currentTime.Day(), (hour+12)%24, minute, 0, 0, time.UTC), nil
+		return time.Date(currentTime.Year(), currentTime.Month(), currentTime.Day(), (hour+12)%24, minute, 0, 0, time.Local), nil
 	}
 
-	return time.Date(currentTime.Year(), currentTime.Month(), currentTime.Day(), hour, minute, 0, 0, time.UTC), nil
+	return time.Date(currentTime.Year(), currentTime.Month(), currentTime.Day(), hour, minute, 0, 0, time.Local), nil
 
 }

@@ -29,7 +29,7 @@ func checkCommand(checkType db.CheckType, s *discordgo.Session, i *discordgo.Int
 		Username:  i.Member.User.Username,
 		Name:      i.Member.Nick,
 		DiscordID: i.Member.User.ID,
-		Timestamp: checkinTime.Unix(),
+		Timestamp: checkinTime.UTC().Unix(),
 		CheckType: checkType,
 	}
 
