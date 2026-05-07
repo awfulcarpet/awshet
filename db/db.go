@@ -23,7 +23,7 @@ var (
 	UsersLogfileName = "users.csv"
 )
 
-func WriteLog(msg CheckMessage) error {
+func WriteMessageToLog(msg CheckMessage) error {
 	f, err := os.OpenFile(CheckLogFileName, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
 	if err != nil {
 		return fmt.Errorf("unable to open check log file: %s", err)
@@ -68,4 +68,3 @@ func ReadLog() ([]*CheckMessage, error) {
 
 	return logs, nil
 }
-

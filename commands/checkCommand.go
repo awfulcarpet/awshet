@@ -33,7 +33,7 @@ func checkCommand(checkType db.CheckType, s *discordgo.Session, i *discordgo.Int
 		CheckType: checkType,
 	}
 
-	err = db.WriteLog(msg)
+	err = db.WriteMessageToLog(msg)
 
 	if err != nil {
 		sendStringResponse(fmt.Sprintf(":x: %s", err.Error()), s, i)

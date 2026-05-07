@@ -2,8 +2,10 @@ package commands
 
 import (
 	"awshet/db"
+	"cmp"
 	"fmt"
 	"log"
+	"slices"
 	"time"
 
 	"github.com/bwmarrin/discordgo"
@@ -14,6 +16,10 @@ func calculateTime(discordID string) (int, float32, error) {
 	if err != nil {
 		return 0, 0, err
 	}
+
+	slices.SortStableFunc(logs, func(a, b *db.CheckMessage) int {
+		return cmp.Compare(a.Timestamp, b.Timestamp)
+	})
 
 	var hours float32 = 0.0
 

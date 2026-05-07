@@ -52,12 +52,12 @@ func RegisterCommands(dg *discordgo.Session) {
 func RemoveCommands(dg *discordgo.Session) {
 	log.Println("Removing all Commands")
 
-	for _, v := range registeredCommands {
-		err := dg.ApplicationCommandDelete(dg.State.User.ID, v.GuildID, v.ID)
-		if err != nil {
-			log.Panicf("Cannot delete '%v' command: %v", v.Name, err)
-		}
-	}
+	// for _, v := range registeredCommands {
+	// 	err := dg.ApplicationCommandDelete(dg.State.User.ID, v.GuildID, v.ID)
+	// 	if err != nil {
+	// 		log.Panicf("Cannot delete '%v' command: %v", v.Name, err)
+	// 	}
+	// }
 }
 
 func slashCommandHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
