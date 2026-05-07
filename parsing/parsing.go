@@ -38,11 +38,15 @@ func parseTime(str string) (int, int, error) {
 
 func ParseCheckMessage(message string) (time.Time, error) {
 	nowRegex := regexp.MustCompile("now")
+	apmRegex := regexp.MustCompile("(?i)[ap]m")
 	// this will match 1+ sequence of characters, an optional ':' and
 	// additional 1+sequence of characters
 	// we are intentionally making this loose in order to give precise feedback
 	hhmmRegex := regexp.MustCompile("([0-9a-zA-Z]*)(:)?([0-9a-zA-Z]*)")
 	currentTime := time.Now()
+
+	ampm := apmRegex.FindString(message)
+	message = strings.ReplaceAll(message, ampm, "")
 
 	if nowRegex.FindString(message) == "now" {
 		return time.Now(), nil
@@ -57,6 +61,11 @@ func ParseCheckMessage(message string) (time.Time, error) {
 	if err != nil {
 		return time.Time{}, fmt.Errorf("invalid time supplied: %s", err)
 	}
+
+	if strings.ToLower(ampm) == "pm" {
+		return time.Date(currentTime.Year(), currentTime.Month(), currentTime.Day(), (hour+12)%24, minute, 0, 0, time.UTC), nil
+	}
+
 	return time.Date(currentTime.Year(), currentTime.Month(), currentTime.Day(), hour, minute, 0, 0, time.UTC), nil
 
 }
