@@ -11,6 +11,13 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
+var (
+	// this is the default checkin/checkout times, only fill in hour + minutes
+	// as the rest are overridden
+	defaultCheckInTime  = time.Date(0, 0, 0, 16, 0, 0, 0, time.Local)
+	defaultCheckOutTime = time.Date(0, 0, 0, 18, 0, 0, 0, time.Local)
+)
+
 func calculateTime(discordID string) (int, float32, error) {
 	logs, err := db.ReadLog()
 	if err != nil {
@@ -26,6 +33,7 @@ func calculateTime(discordID string) (int, float32, error) {
 	days := make(map[time.Time]bool)
 
 	var curTime int64 = 0.0
+	var state string = ""
 
 	for _, l := range logs {
 		if l.DiscordID != discordID {
@@ -38,11 +46,23 @@ func calculateTime(discordID string) (int, float32, error) {
 
 		if l.CheckType == "in" {
 			curTime = l.Timestamp
+			state = "in"
 		}
 
 		if l.CheckType == "out" {
-			hours += float32(l.Timestamp-curTime) / 3600.0
+			timeDiff := float32(l.Timestamp-curTime) / 3600.0
+
+			if state != "in" {
+				timeDiff = float32(l.Timestamp-defaultCheckInTime.AddDate(year, int(month), day).Unix()) / 3600.0
+			}
+
+			if timeDiff < 0 {
+				return 0, 0, fmt.Errorf("time diff calculated on %d/%d/%d (%d) is negative (%.2f)", year, month, day, l.Timestamp, timeDiff)
+			}
+
+			hours += timeDiff
 			curTime = 0.0
+			state = "out"
 		}
 	}
 
