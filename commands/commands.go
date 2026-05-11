@@ -7,30 +7,38 @@ import (
 )
 
 var (
-	timeOption = &discordgo.ApplicationCommandOption{
-		Type:        discordgo.ApplicationCommandOptionString,
-		Name:        "time",
-		Description: "a value, either 'now' or in the format 'xx:yy' to log",
-		Required:    true,
+	timeOptions = []*discordgo.ApplicationCommandOption{
+		{
+			Type:        discordgo.ApplicationCommandOptionString,
+			Name:        "time",
+			Description: "a value, either 'now' or in the format 'xx:yy' to log",
+			Required:    true,
+		},
+		{
+			Type:        discordgo.ApplicationCommandOptionString,
+			Name:        "date",
+			Description: "a optional date string in the form yy/mm/dd to record a log for.  the yy may be left off to default to current year",
+			Required:    false,
+		},
 	}
 	commands = []*discordgo.ApplicationCommand{
 		{
 			Name:        "checkin",
 			Description: "Checks students in and logs time and day",
-			Options: []*discordgo.ApplicationCommandOption{
-				timeOption,
-			},
+			Options:     timeOptions,
 		},
 		{
 			Name:        "checkout",
 			Description: "Checks students out and logs time and day",
-			Options: []*discordgo.ApplicationCommandOption{
-				timeOption,
-			},
+			Options:     timeOptions,
 		},
 		{
 			Name:        "time",
 			Description: "lists currently logged time for user",
+		},
+		{
+			Name:        "listlog",
+			Description: "lists out all logged dates and times for a user",
 		},
 	}
 	registeredCommands = make([]*discordgo.ApplicationCommand, len(commands))
