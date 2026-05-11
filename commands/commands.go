@@ -17,7 +17,7 @@ var (
 		{
 			Type:        discordgo.ApplicationCommandOptionString,
 			Name:        "date",
-			Description: "a optional date string in the form yy/mm/dd to record a log for.  the yy may be left off to default to current year",
+			Description: "a optional date string in the form yy/mm/dd to record a log for",
 			Required:    false,
 		},
 	}
@@ -46,13 +46,13 @@ var (
 
 func RegisterCommands(dg *discordgo.Session) {
 	log.Println("Creating all commands")
-	for i, v := range commands {
-		cmd, err := dg.ApplicationCommandCreate(dg.State.User.ID, "", v)
-		if err != nil {
-			log.Panicf("Cannot create '%v' command: %v", v.Name, err)
-		}
-		registeredCommands[i] = cmd
-	}
+	// for i, v := range commands {
+	// 	cmd, err := dg.ApplicationCommandCreate(dg.State.User.ID, "", v)
+	// 	if err != nil {
+	// 		log.Panicf("Cannot create '%v' command: %v", v.Name, err)
+	// 	}
+	// 	registeredCommands[i] = cmd
+	// }
 
 	dg.AddHandler(slashCommandHandler)
 }
@@ -77,6 +77,8 @@ func slashCommandHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		checkCommand("out", s, i)
 	case "time":
 		timeCommand(s, i)
+	case "listlog":
+		listLogCommand(s, i)
 	}
 }
 
