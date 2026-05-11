@@ -85,6 +85,6 @@ func timeCommand(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	}
 
 	sendStringResponse(
-		fmt.Sprintf("%s has logged %.2f hours over the course of %d days",
-			i.Member.Nick, hours, days), s, i)
+		fmt.Sprintf("%s has logged %2d hours and %2d min over the course of %d days",
+			i.Member.Nick, int(hours), int(hours/1.0*60), days), s, i)
 }
