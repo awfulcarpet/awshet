@@ -5,6 +5,7 @@ import (
 	"cmp"
 	"fmt"
 	"log"
+	"math"
 	"slices"
 	"time"
 
@@ -84,7 +85,9 @@ func timeCommand(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		return
 	}
 
+	hour, min := math.Modf(float64(hours))
+
 	sendStringResponse(
 		fmt.Sprintf("%s has logged %2d hours and %2d min over the course of %d days",
-			i.Member.Nick, int(hours), int(hours/1.0*60), days), s, i)
+			i.Member.Nick, int(hour), int(min*60), days), s, i)
 }
