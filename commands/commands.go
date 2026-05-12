@@ -11,7 +11,7 @@ var (
 		{
 			Type:        discordgo.ApplicationCommandOptionString,
 			Name:        "time",
-			Description: "a value, either 'now' or in the format 'xx:yy' to log",
+			Description: "a value, either 'now' or in format 'xx:yy' with optional am/pm and leading zeros",
 			Required:    true,
 		},
 	}
@@ -28,7 +28,7 @@ var (
 		},
 		{
 			Name:        "time",
-			Description: "lists currently logged time for user",
+			Description: "lists total currently logged time for user",
 		},
 		{
 			Name:        "listlog",
