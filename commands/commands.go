@@ -40,13 +40,13 @@ var (
 
 func RegisterCommands(dg *discordgo.Session) {
 	log.Println("Creating all commands")
-	// for i, v := range commands {
-	// 	cmd, err := dg.ApplicationCommandCreate(dg.State.User.ID, "", v)
-	// 	if err != nil {
-	// 		log.Panicf("Cannot create '%v' command: %v", v.Name, err)
-	// 	}
-	// 	registeredCommands[i] = cmd
-	// }
+	for i, v := range commands {
+		cmd, err := dg.ApplicationCommandCreate(dg.State.User.ID, "", v)
+		if err != nil {
+			log.Panicf("Cannot create '%v' command: %v", v.Name, err)
+		}
+		registeredCommands[i] = cmd
+	}
 
 	dg.AddHandler(slashCommandHandler)
 }
@@ -54,12 +54,12 @@ func RegisterCommands(dg *discordgo.Session) {
 func RemoveCommands(dg *discordgo.Session) {
 	log.Println("Removing all Commands")
 
-	// for _, v := range registeredCommands {
-	// 	err := dg.ApplicationCommandDelete(dg.State.User.ID, v.GuildID, v.ID)
-	// 	if err != nil {
-	// 		log.Panicf("Cannot delete '%v' command: %v", v.Name, err)
-	// 	}
-	// }
+	for _, v := range registeredCommands {
+		err := dg.ApplicationCommandDelete(dg.State.User.ID, v.GuildID, v.ID)
+		if err != nil {
+			log.Panicf("Cannot delete '%v' command: %v", v.Name, err)
+		}
+	}
 }
 
 func slashCommandHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
