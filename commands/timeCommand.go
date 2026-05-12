@@ -19,6 +19,11 @@ var (
 	defaultCheckOutTime = time.Date(0, 0, 0, 18, 0, 0, 0, time.Local)
 )
 
+type pair = struct {
+	in  int64
+	out int64
+}
+
 func calculateTime(discordID string) (int, float32, error) {
 	logs, err := db.ReadLog()
 	if err != nil {
@@ -30,40 +35,37 @@ func calculateTime(discordID string) (int, float32, error) {
 	})
 
 	var hours float32 = 0.0
-
 	days := make(map[time.Time]bool)
 
-	var curTime int64 = 0.0
-	var state string = ""
+	var check pair
 
 	for _, l := range logs {
 		if l.DiscordID != discordID {
 			continue
 		}
+		switch l.CheckType {
+		case "in":
+			check.in = l.Timestamp
+		case "out":
+			check.out = l.Timestamp
 
-		year, month, day := time.Unix(l.Timestamp, 0).Local().Date()
-		k := time.Date(year, month, day, 0, 0, 0, 0, time.Local)
-		days[k] = true
+			year, month, day := time.Unix(l.Timestamp, 0).Local().Date()
+			k := time.Date(year, month, day, 0, 0, 0, 0, time.Local)
+			days[k] = true
 
-		if l.CheckType == "in" {
-			curTime = l.Timestamp
-			state = "in"
-		}
-
-		if l.CheckType == "out" {
-			timeDiff := float32(l.Timestamp-curTime) / 3600.0
-
-			if state != "in" {
-				timeDiff = float32(l.Timestamp-defaultCheckInTime.AddDate(year, int(month), day).Unix()) / 3600.0
+			if check.in == 0 {
+				check.in = defaultCheckInTime.AddDate(year, int(month), day).Unix()
 			}
 
+			timeDiff := float32(check.out-check.in) / 3600.0
 			if timeDiff < 0 {
 				return 0, 0, fmt.Errorf("time diff calculated on %d/%d/%d (%d) is negative (%.2f)", year, month, day, l.Timestamp, timeDiff)
 			}
-
 			hours += timeDiff
-			curTime = 0.0
-			state = "out"
+
+			check = pair{}
+		default:
+			return 0, 0, fmt.Errorf("checktype for log is somehow incorrect")
 		}
 	}
 
