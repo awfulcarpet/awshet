@@ -45,6 +45,20 @@ func calculateTime(discordID string) (int, float32, error) {
 		}
 		switch l.CheckType {
 		case "in":
+			if check.in != 0 {
+				year, month, day := time.Unix(check.in, 0).Local().Date()
+				k := time.Date(year, month, day, 0, 0, 0, 0, time.Local)
+				days[k] = true
+
+				check.out = defaultCheckOutTime.AddDate(year, int(month), day).Unix()
+
+				timeDiff := float32(check.out-check.in) / 3600.0
+				if timeDiff < 0 {
+					return 0, 0, fmt.Errorf("time diff calculated on %d/%d/%d (%d) is negative (%.2f)", year, month, day, l.Timestamp, timeDiff)
+				}
+				hours += timeDiff
+				check = pair{}
+			}
 			check.in = l.Timestamp
 		case "out":
 			check.out = l.Timestamp
