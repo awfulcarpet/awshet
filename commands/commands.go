@@ -14,12 +14,6 @@ var (
 			Description: "a value, either 'now' or in the format 'xx:yy' to log",
 			Required:    true,
 		},
-		{
-			Type:        discordgo.ApplicationCommandOptionString,
-			Name:        "date",
-			Description: "a optional date string in the form yy/mm/dd to record a log for",
-			Required:    false,
-		},
 	}
 	commands = []*discordgo.ApplicationCommand{
 		{
